@@ -1,0 +1,22 @@
+services:
+  northwind_db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: northwind
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes: 
+      - ./data_sources/northwind/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - pipeline_network
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d northwind"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+networks:
+  pipeline_network:
+    driver: bridge
